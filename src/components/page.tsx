@@ -15,6 +15,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import HomeIcon from '@material-ui/icons/Home';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import AssignmentIcon from '@material-ui/icons/Assignment';
+import { NavLink } from 'react-router-dom';
 
 const Root = styled('div')({
     flexGrow: 1,
@@ -22,14 +23,17 @@ const Root = styled('div')({
     minHeight: '100vh',
 });
 
+
 function Page(props: PropsWithChildren<any>) {
 
     const theme = useTheme();
 
+      //convert to a function call given `theme`, which returns the styled list item
+       //make it a useState thing?
     const StyledListItem = styled(ListItem)({
         marginRight: theme.spacing(2),
     });
-    
+
     const [drawerOpen, setDrawerOpen] = useState(false);
 
     return (
@@ -47,18 +51,24 @@ function Page(props: PropsWithChildren<any>) {
             </AppBar>
             <Drawer anchor="left" open={drawerOpen} onClick={() => setDrawerOpen(false)}>
                 <List>
-                    <StyledListItem button>
-                        <ListItemIcon><HomeIcon /></ListItemIcon>
-                        <ListItemText>Dashboard</ListItemText>
-                    </StyledListItem>
-                    <StyledListItem button>
-                        <ListItemIcon><AssessmentIcon /></ListItemIcon>
-                        <ListItemText>Grades</ListItemText>
-                    </StyledListItem>
-                    <StyledListItem button>
-                        <ListItemIcon><AssignmentIcon /></ListItemIcon>
-                        <ListItemText>Assignment</ListItemText>
-                    </StyledListItem>
+                    <NavLink to='/home'>
+                        <StyledListItem button>
+                            <ListItemIcon><HomeIcon /></ListItemIcon>
+                            <ListItemText>Dashboard</ListItemText>
+                        </StyledListItem>
+                    </NavLink>
+                    <NavLink to='/grades'>
+                        <StyledListItem button>
+                            <ListItemIcon><AssessmentIcon /></ListItemIcon>
+                            <ListItemText>Grades</ListItemText>
+                        </StyledListItem>
+                    </NavLink>
+                    <NavLink to='/learning'>
+                        <StyledListItem button>
+                            <ListItemIcon><AssignmentIcon /></ListItemIcon>
+                            <ListItemText>Next Assignment</ListItemText>
+                        </StyledListItem>
+                    </NavLink>
                 </List>
             </Drawer>
             <div style={theme.mixins.toolbar} />

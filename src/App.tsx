@@ -10,6 +10,8 @@ import Home from './pages/home';
 import Landing from './pages/landing';
 import Configuration from './pages/configuration';
 import Lab from './pages/learning/lab';
+import Grades from './pages/grades';
+import Learning from './pages/learning';
 
 const theme = createMuiTheme({
   palette: {
@@ -39,14 +41,17 @@ function App(props: any) {
     <ThemeProvider theme={theme}>
       <Router>
         <Switch>
-          <Route path='/' >
-            {/* <Landing /> */}
-            {/* for now: */}
-            {/* <Lab /> */}
-            <Home />
-          </Route>
           <Route path='/home' >
             <Home />
+          </Route>
+          <Route path='/grades'>
+            <Grades />
+          </Route>
+          <Route path='/learning'>
+            <Learning />
+          </Route>
+          <Route path='/' >
+            <Landing />
           </Route>
         </Switch>
       </Router>
