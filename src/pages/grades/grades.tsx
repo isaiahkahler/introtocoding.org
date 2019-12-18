@@ -7,7 +7,7 @@ interface GradesProps {
 
 function Grades(props: GradesProps){
     return(
-        <Page>
+        <Page title='Grades'>
             Grades!
         </Page>
     );

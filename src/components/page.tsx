@@ -24,7 +24,7 @@ const Root = styled('div')({
 });
 
 
-function Page(props: PropsWithChildren<any>) {
+function Page(props: PropsWithChildren<any> & {title: string}) {
 
     const theme = useTheme();
 
@@ -44,7 +44,7 @@ function Page(props: PropsWithChildren<any>) {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" >
-                        Dashboard
+                        {props.title}
                 </Typography>
                     <Button color="inherit">Login</Button>
                 </Toolbar>

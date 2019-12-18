@@ -67,7 +67,7 @@ function Home(props: HomeProps) {
 
 
     return (
-        <Page>
+        <Page title='Dashboard'>
             <Container maxWidth='lg' style={{ padding: theme.spacing(2) }}>
                 <Grid container spacing={3}>
                     <Grid item xs>
