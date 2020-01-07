@@ -1,27 +1,34 @@
+/** User information to retrieve on login. */
 export interface User {
     firstName: string,
     lastName: string,
     type: 'student' | 'teacher',
+    /** UUID */
     id: string,
+    /** ID of teacher's classroom. */
     classID: string | null,
-    data: WorkData,
-
+    workData: WorkData[],
+    settings: UserSettings | null,
 }
 
-export interface WorkData {
-    assignments: Assignment[],
+interface UserSettings { 
+    theme: 'dark' | 'light' | 'auto',
+    codePreference: 'online' | 'offline',
 }
 
+/** Course URL paired with user's course work. */
+interface WorkData {
+    course: string,
+    work: Assignment[],
+}
 
-export interface Assignment {
-    points: number | null,
+/** User's work per CourseContent, without the content. */
+interface Assignment {
     score: number | null,
-    type: 'lesson' | 'quiz' | 'lab' | 'project' | 'practice',
     progress: Progress,
-    name: string,
-    contentURL: string,
-    extra?: number,
-    comments?: Comment
+    comments: Comment[] | null,
+    /** ID of corresponding CourseContent object. */
+    id: string,
 }
 
 interface Comment {
