@@ -35,7 +35,7 @@ const StyledCircularProgress = styled(({ ...props }) => {
 
     )
 })((props: { theme: Theme }) => ({
-    position: "absolute"
+    position: "relative"
 }));
 
 // const StyledCircularProgress = styled(({...other}) => {
@@ -73,27 +73,14 @@ function Home(props: HomeProps) {
                     <Grid item xs>
                         <StyledPaper>
                             <Typography variant='h6'>Current Grade</Typography>
-                            {/* <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '50%', padding: theme.spacing(1) }} >
-                                <StyledCircularProgress size="50" variant='static' value={gradeAnimation} style={{transition: '2s'}} />
-                                <Typography variant='h5' style={{ position: 'absolute' }}>{props.grade != null ? `${props.grade}%` : "N/A"}</Typography>
-                            </span> */}
+
                         </StyledPaper>
                     </Grid>
                     <Grid item xs>
                         <StyledPaper>
                             <Typography variant='h6'>Progress</Typography>
                             <StyledCircularProgress variant='static' value={props.progress} />
-                            {/* <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '50%', padding: theme.spacing(1) }} >
-                                <div style={{position: 'absolute'}}>
-                                <StyledCircularProgress size="50" variant='static' value={100} style={{color: "#ccc"}} />
 
-                                </div>
-                                <div style={{position: 'absolute'}}>
-
-                                <StyledCircularProgress size="50" variant='static' value={progressAnimation} />
-                                </div>
-                                <Typography variant='h5' style={{ position: 'absolute' }}>{props.progress}%</Typography>
-                            </span> */}
                         </StyledPaper>
                     </Grid>
                     <Grid item xs>
