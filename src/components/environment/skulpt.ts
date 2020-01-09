@@ -16,11 +16,19 @@ export function useSkulpt(onOutput: (output: string) => void,) {
 
     // set skulpt listener
     useEffect(() => {
+
+
         if (!!worker) {
             worker.addEventListener('message', (message) => {
                 onOutput(message.data);
             });
         }
+
+        return () => {
+            worker && worker.removeEventListener('message', (message) => {
+                onOutput(message.data);
+            });
+        };
     }, [worker]);
 
     // on new code
