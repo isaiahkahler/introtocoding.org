@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -12,31 +12,40 @@ import Configuration from './pages/configuration';
 import Lab from './pages/learning/lab';
 import Grades from './pages/grades';
 import Learning from './pages/learning';
-
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      main: "#3CB3F6",
-      contrastText: "#fcfcfc"
-    }
-  },
-  typography: {
-    fontFamily: [
-      '-apple-system',
-      'BlinkMacSystemFont',
-      '"Segoe UI"',
-      'Roboto',
-      '"Helvetica Neue"',
-      'Arial',
-      'sans-serif',
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(','),
-  },
-});
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 function App(props: any) {
+
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+  const theme = useMemo(() => {
+    return createMuiTheme(
+      {
+        palette: {
+          type: prefersDarkMode ? 'dark' : 'light',
+          primary: {
+            main: "#3CB3F6",
+            contrastText: "#fcfcfc"
+          }
+        },
+        typography: {
+          fontFamily: [
+            '-apple-system',
+            'BlinkMacSystemFont',
+            '"Segoe UI"',
+            'Roboto',
+            '"Helvetica Neue"',
+            'Arial',
+            'sans-serif',
+            '"Apple Color Emoji"',
+            '"Segoe UI Emoji"',
+            '"Segoe UI Symbol"',
+          ].join(','),
+        },
+      }
+    )
+  }, [prefersDarkMode]);
+
   return (
     <ThemeProvider theme={theme}>
       <Router>
