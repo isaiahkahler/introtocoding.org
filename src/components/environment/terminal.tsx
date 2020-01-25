@@ -1,9 +1,6 @@
 import React, { useEffect, useState, useRef, useLayoutEffect, useMemo } from 'react';
 import {Terminal as XTerminal, ITheme} from 'xterm';
-import '../../../node_modules/xterm/css/xterm.css';
-import { useTheme, Button } from '@material-ui/core';
-
-
+import 'xterm/css/xterm.css';
 
 interface TerminalProps {
     onInput: (input: string) => void,
@@ -24,12 +21,12 @@ const xTermLight:ITheme = {
 };
 
 const lightTheme = {
-    fontFamily: 'Roboto Mono',
+    fontFamily: '"Roboto Mono", monospace',
     theme: xTermLight,
 };
 
 const darkTheme = {
-    fontFamily: 'Roboto Mono'
+    fontFamily: '"Roboto Mono", monospace'
 };
 
 
@@ -97,6 +94,37 @@ export default function Terminal(props: TerminalProps) {
             xTerm && xTerm.dispose();
         });
     }, [xTerm]);
+
+    useEffect(() => {
+        const unsubscribe = xTerm.onKey(e => {
+            const ev = e.domEvent;
+            const printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
+            const _command = commandRef.current;
+        
+            // on 'enter'
+            if (ev.keyCode === 13) {
+                props.onInput(_command);
+                //on enter, clear the current command
+                setCommand('');
+                prompt();
+            // on 'backspace'
+            } else if (ev.keyCode === 8) {
+             // Do not delete the prompt
+              if (xTerm.buffer.cursorX > promptText.length) {
+                xTerm.write('\b \b');
+                setCommand(prev => prev.slice(0, prev.length - 1));
+              }
+            // on printable character
+            } else if (printable) {
+              xTerm.write(e.key);
+              setCommand(prev => prev + e.key);
+            }
+          });
+        
+        return () => {
+            unsubscribe.dispose();
+        }
+    }, [xTerm])
 
 
     useEffect(() => {
