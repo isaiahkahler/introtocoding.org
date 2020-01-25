@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useLayoutEffect } from 'react';
+import React, { useEffect, useState, useRef, useLayoutEffect, useMemo } from 'react';
 import {Terminal as XTerminal, ITheme} from 'xterm';
 import '../../../node_modules/xterm/css/xterm.css';
 import { useTheme, Button } from '@material-ui/core';
@@ -23,19 +23,21 @@ const xTermLight:ITheme = {
     cursor: '#ccc',
 };
 
+const lightTheme = {
+    fontFamily: 'Roboto Mono',
+    theme: xTermLight,
+};
 
+const darkTheme = {
+    fontFamily: 'Roboto Mono'
+};
 
 
 export default function Terminal(props: TerminalProps) {
 
-    const xTermOptions = props.theme === 'light'? {
-        fontFamily: 'Roboto Mono',
-        theme: xTermLight,
-    } : {
-        fontFamily: 'Roboto Mono'
-    };
+    const xTermOptions = props.theme === 'light' ? lightTheme : darkTheme;
 
-    const [xTerm, setXTerm] = useState<XTerminal>(new XTerminal(xTermOptions));
+    const xTerm = useMemo(() => new XTerminal(xTermOptions), [xTermOptions]);
 
     const [isStarted, setIsStarted] = useState(false);
 
@@ -47,7 +49,7 @@ export default function Terminal(props: TerminalProps) {
 
     useLayoutEffect(() => {
         commandRef.current = command;
-    }, [command])
+    }, [command]);
 
     //start xTerm object
     useEffect(() => {
@@ -94,7 +96,7 @@ export default function Terminal(props: TerminalProps) {
         return(() => {
             xTerm && xTerm.dispose();
         });
-    }, []);
+    }, [xTerm]);
 
 
     useEffect(() => {
