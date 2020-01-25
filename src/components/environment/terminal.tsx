@@ -95,36 +95,41 @@ export default function Terminal(props: TerminalProps) {
         });
     }, [xTerm]);
 
-    useEffect(() => {
-        const unsubscribe = xTerm.onKey(e => {
-            const ev = e.domEvent;
-            const printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
-            const _command = commandRef.current;
+    // useEffect(() => {
+    //     const unsubscribe = xTerm.onKey(e => {
+
+    //         const prompt = () => {
+    //             xTerm.write(`\r\n${promptText}`);
+    //         };
+
+    //         const ev = e.domEvent;
+    //         const printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
+    //         const _command = commandRef.current;
         
-            // on 'enter'
-            if (ev.keyCode === 13) {
-                props.onInput(_command);
-                //on enter, clear the current command
-                setCommand('');
-                prompt();
-            // on 'backspace'
-            } else if (ev.keyCode === 8) {
-             // Do not delete the prompt
-              if (xTerm.buffer.cursorX > promptText.length) {
-                xTerm.write('\b \b');
-                setCommand(prev => prev.slice(0, prev.length - 1));
-              }
-            // on printable character
-            } else if (printable) {
-              xTerm.write(e.key);
-              setCommand(prev => prev + e.key);
-            }
-          });
+    //         // on 'enter'
+    //         if (ev.keyCode === 13) {
+    //             props.onInput(_command);
+    //             //on enter, clear the current command
+    //             setCommand('');
+    //             prompt();
+    //         // on 'backspace'
+    //         } else if (ev.keyCode === 8) {
+    //          // Do not delete the prompt
+    //           if (xTerm.buffer.cursorX > promptText.length) {
+    //             xTerm.write('\b \b');
+    //             setCommand(prev => prev.slice(0, prev.length - 1));
+    //           }
+    //         // on printable character
+    //         } else if (printable) {
+    //           xTerm.write(e.key);
+    //           setCommand(prev => prev + e.key);
+    //         }
+    //       });
         
-        return () => {
-            unsubscribe.dispose();
-        }
-    }, [xTerm])
+    //     return () => {
+    //         unsubscribe.dispose();
+    //     }
+    // }, [xTerm])
 
 
     useEffect(() => {
