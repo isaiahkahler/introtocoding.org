@@ -1,37 +1,31 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 
 export function useSkulpt(onOutput: (output: string) => void,) {
-    const [worker, setWorker] = useState<Worker>();
+    const worker = useMemo(() => new Worker('./webworker.js'), []);
+    const onOutputRef = useRef(onOutput);
 
-    // load skulpt worker
     useEffect(() => {
-        setWorker(new Worker('./webworker.js'));
         return () => {
-            //cleanup
-            !!worker && worker.terminate();
-        }
-    }, []);
+            worker.terminate();
+        };
+    }, [worker]);
 
     // set skulpt listener
     useEffect(() => {
-
-
-        if (!!worker) {
-            worker.addEventListener('message', (message) => {
-                onOutput(message.data);
-            });
+        const handleMessage = (message: {data: string}) => {
+            const onOutput = onOutputRef.current;
+            onOutput(message.data);
         }
+        worker.addEventListener('message', handleMessage);
 
         return () => {
-            worker && worker.removeEventListener('message', (message) => {
-                onOutput(message.data);
-            });
+            worker.removeEventListener('message', handleMessage);
         };
     }, [worker]);
 
     // on new code
     const runCode = useCallback((code: string) => {
-        worker && worker.postMessage(code);
+        worker.postMessage(code);
     }, [worker]);
 
     return runCode;
