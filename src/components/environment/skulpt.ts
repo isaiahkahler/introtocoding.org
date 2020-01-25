@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 
 export function useSkulpt(onOutput: (output: string) => void,) {
     const [worker, setWorker] = useState<Worker>();
 
-    const [code, runCode] = useState('');
-
     // load skulpt worker
     useEffect(() => {
-        setWorker(new Worker('./webworker.js'))
+        setWorker(new Worker('./webworker.js'));
         return () => {
             //cleanup
             !!worker && worker.terminate();
@@ -32,9 +30,9 @@ export function useSkulpt(onOutput: (output: string) => void,) {
     }, [worker]);
 
     // on new code
-    useEffect(() => {
-        !!worker && worker.postMessage(code);
-    }, [code]);
+    const runCode = useCallback((code: string) => {
+        worker && worker.postMessage(code);
+    }, []);
 
     return runCode;
 }
