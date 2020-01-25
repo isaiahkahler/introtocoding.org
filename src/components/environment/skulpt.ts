@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export function useSkulpt(onOutput: (output: string) => void,) {
     const [worker, setWorker] = useState<Worker>();
@@ -32,7 +32,7 @@ export function useSkulpt(onOutput: (output: string) => void,) {
     // on new code
     const runCode = useCallback((code: string) => {
         worker && worker.postMessage(code);
-    }, []);
+    }, [worker]);
 
     return runCode;
 }
