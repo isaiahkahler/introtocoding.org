@@ -7,7 +7,7 @@ import Environment from '../../../components/environment';
 function LessonContainer(props: {}) {
    
     return (
-        <Page title='Learning!'>
+        <Page title='Learning!' noSpacer>
             <Environment />
         </Page>
     );

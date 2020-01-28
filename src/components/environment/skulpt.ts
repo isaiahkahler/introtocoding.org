@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useEffect, useCallback, useMemo, useRef } from 'react';
 
 export function useSkulpt(onOutput: (output: string) => void,) {
     const worker = useMemo(() => new Worker('./webworker.js'), []);

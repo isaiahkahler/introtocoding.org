@@ -1,4 +1,4 @@
-import React, { useState, ReactElement, PropsWithChildren } from 'react';
+import React, { useState, PropsWithChildren } from 'react';
 import { styled, useTheme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
