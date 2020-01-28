@@ -17,24 +17,38 @@ import AssessmentIcon from '@material-ui/icons/Assessment';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import { NavLink } from 'react-router-dom';
 
-const Root = styled('div')({
+
+//review 
+const Root = styled('div')(({theme}) => ({
     flexGrow: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.palette.background.default,
     minHeight: '100vh',
-});
+}));
 
+const StyledNavLink = styled(NavLink)(({theme}) => ({
+    textDecoration: 'none',
+    color: theme.palette.getContrastText(theme.palette.background.default),
+}));
 
-function Page(props: PropsWithChildren<any> & {title: string}) {
+const StyledListItem = styled(ListItem)(({theme}) => ({
+    marginRight: theme.spacing(2),
+    backgroundColor: 'inherit'
+}));
+
+interface PageProps {
+    title: string,
+    noSpacer?: boolean,
+}
+
+function Page(props: PropsWithChildren<PageProps>) {
 
     const theme = useTheme();
 
-      //convert to a function call given `theme`, which returns the styled list item
-       //make it a useState thing?
-    const StyledListItem = styled(ListItem)({
-        marginRight: theme.spacing(2),
-    });
-
     const [drawerOpen, setDrawerOpen] = useState(false);
+
+    const activeNavLinkStyle = {
+        backgroundColor: theme.palette.action.selected, 
+    };
 
     return (
         <Root>
@@ -51,27 +65,28 @@ function Page(props: PropsWithChildren<any> & {title: string}) {
             </AppBar>
             <Drawer anchor="left" open={drawerOpen} onClick={() => setDrawerOpen(false)}>
                 <List>
-                    <NavLink to='/home'>
+                    <StyledNavLink to='/home' activeStyle={activeNavLinkStyle}>
                         <StyledListItem button>
                             <ListItemIcon><HomeIcon /></ListItemIcon>
                             <ListItemText>Dashboard</ListItemText>
                         </StyledListItem>
-                    </NavLink>
-                    <NavLink to='/grades'>
+                    </StyledNavLink>
+                    <StyledNavLink to='/grades' activeStyle={activeNavLinkStyle}>
                         <StyledListItem button>
                             <ListItemIcon><AssessmentIcon /></ListItemIcon>
                             <ListItemText>Grades</ListItemText>
                         </StyledListItem>
-                    </NavLink>
-                    <NavLink to='/learning'>
+                    </StyledNavLink>
+                    <StyledNavLink to='/learning' activeStyle={activeNavLinkStyle}>
                         <StyledListItem button>
                             <ListItemIcon><AssignmentIcon /></ListItemIcon>
                             <ListItemText>Next Assignment</ListItemText>
                         </StyledListItem>
-                    </NavLink>
+                    </StyledNavLink>
                 </List>
             </Drawer>
-            <div style={theme.mixins.toolbar} />
+            {!props.noSpacer && <div style={{...theme.mixins.toolbar, paddingTop: theme.spacing(1)}} />}
+            
             {props.children}
         </Root>
     );
