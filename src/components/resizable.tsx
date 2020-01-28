@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useEffect, useState } from 'react';
+import React, { PropsWithChildren, useEffect, useState, useCallback } from 'react';
 
 import { styled, useTheme } from '@material-ui/core/styles';
 
@@ -20,55 +20,59 @@ export default function Resizable(props: PropsWithChildren<ResizableProps>) {
 
     const theme = useTheme();
 
-    const id = useState(Math.round(Math.random() * 1000))[0].toString();
+    const [initialPosition, setInitialPosition] = useState(0);
 
-    const colID = `col-${id}`
+    const [initialSize, setInitialSize] = useState(0);
 
-    const [grabber, setGrabber] = useState<HTMLElement | null>(null);
+    const [size, setSize] = useState<React.CSSProperties>();
 
-    const [container, setContainer] = useState<HTMLElement | null>(null);
+    const [moving, setMoving] = useState(false);
 
 
+    const onMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        // console.log('mouse down')
+        setInitialPosition(props.horizontal ? event.pageY : event.pageX);
+
+        event.currentTarget.parentElement && setInitialSize(props.horizontal ? event.currentTarget.parentElement.getBoundingClientRect().height : event.currentTarget.parentElement.getBoundingClientRect().width);
+        setMoving(true);
+    }
+
+    const onMouseUp = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        // console.log('mouse up')
+        setMoving(false);
+    }
+
+    // needs code review
+    const onMouseMove = useCallback((event: MouseEvent) => {
+        // console.log('mouse move')
+        if(moving){
+            setSize(props.horizontal ? {height: `${initialSize - (event.pageY - initialPosition)}px`} : {width: `${initialSize + (event.pageX - initialPosition)}px`});
+        }
+    }, [initialPosition, initialSize, moving, props.horizontal])
+
+
+    //needs code review
+    //
     useEffect(() => {
+        // console.log('setup')
+        const call = (event: MouseEvent) => {
+            onMouseMove(event);
+        }
 
-        setGrabber(document.getElementById(id));
-
-        setContainer(document.getElementById(colID));
-
-    }, []);
-
-    useEffect(() => {
-        
-        let _container: HTMLElement | null;
-        let initialPosition: number;
-        let initialSize: number | null;
-
-        grabber && grabber.addEventListener('mousedown', (e) => {
-            initialPosition = props.horizontal ? e.pageY : e.pageX;
-            _container = container;
-            initialSize = container && (props.horizontal ? container.getBoundingClientRect().height : container.getBoundingClientRect().width);
-        });
-
-        document.addEventListener('mouseup', () => {
-            _container = null;
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (_container && initialSize) {
-                props.horizontal ? _container.style.height = `${initialSize - (e.pageY - initialPosition)}px` : _container.style.width = `${initialSize + (e.pageX - initialPosition)}px`
-            }
-        });
-
-    }, [grabber]);
+        document.addEventListener('mousemove', call);
+        return () => {
+            document.removeEventListener('mousemove', call);
+        };
+    }, [onMouseMove]);
 
     return (
-        <div id={colID} style={{display: 'flex', flexDirection: props.horizontal ? 'column' : 'row' }}>
+        <div style={{ ...size, display: 'flex', flexDirection: props.horizontal ? 'column' : 'row' }}>
             {!props.horizontal && <StyledContent>
                 {props.children}
             </StyledContent>}
 
             {/* grab bar */}
-            <div id={id} style={props.horizontal ? {
+            <div onMouseDown={onMouseDown} onMouseUp={onMouseUp} style={props.horizontal ? {
                 top: 0,
                 left: 0,
                 height: '10px',
@@ -91,7 +95,7 @@ export default function Resizable(props: PropsWithChildren<ResizableProps>) {
                     cursor: 'col-resize',
                     userSelect: 'none'
                 }}>
-                    {/* grab indicator */}
+                {/* grab indicator */}
                 <div style={props.horizontal ? {
                     height: '5px',
                     width: '25px',
