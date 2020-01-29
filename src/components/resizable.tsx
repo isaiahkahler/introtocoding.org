@@ -8,11 +8,14 @@ interface ResizableProps {
     maxWidth?: string,
     closeWidth?: string,
     onClose?: () => void,
+    onResize?:() => void,
+    onResizeFinish?: () => void,
 }
 
 const StyledContent = styled('div')({
     width: '100%',
-    height: '100%'
+    height: '100%',
+    overflow: 'hidden',
 });
 
 
@@ -28,42 +31,52 @@ export default function Resizable(props: PropsWithChildren<ResizableProps>) {
 
     const [moving, setMoving] = useState(false);
 
+    const _onResize = props.onResize;
+
+    const _onResizeFinish = props.onResizeFinish;
+
 
     const onMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        // console.log('mouse down')
         setInitialPosition(props.horizontal ? event.pageY : event.pageX);
 
         event.currentTarget.parentElement && setInitialSize(props.horizontal ? event.currentTarget.parentElement.getBoundingClientRect().height : event.currentTarget.parentElement.getBoundingClientRect().width);
         setMoving(true);
     }
 
-    const onMouseUp = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        // console.log('mouse up')
+    // these events are placed on the document, so they don't use React.MouseEvent
+    const onMouseUp = useCallback((event: MouseEvent) => {
         setMoving(false);
-    }
+        _onResizeFinish && _onResizeFinish();
+    }, [_onResizeFinish]);
 
-    // needs code review
     const onMouseMove = useCallback((event: MouseEvent) => {
-        // console.log('mouse move')
         if(moving){
             setSize(props.horizontal ? {height: `${initialSize - (event.pageY - initialPosition)}px`} : {width: `${initialSize + (event.pageX - initialPosition)}px`});
+            _onResize && _onResize();
         }
-    }, [initialPosition, initialSize, moving, props.horizontal])
+    }, [initialPosition, initialSize, moving, props.horizontal, _onResize])
 
-
-    //needs code review
-    //
+    // set event listeners on document
     useEffect(() => {
-        // console.log('setup')
-        const call = (event: MouseEvent) => {
+        const doMouseMove = (event: MouseEvent) => {
             onMouseMove(event);
         }
-
-        document.addEventListener('mousemove', call);
+        document.addEventListener('mousemove', doMouseMove);
         return () => {
-            document.removeEventListener('mousemove', call);
+            document.removeEventListener('mousemove', doMouseMove);
         };
     }, [onMouseMove]);
+
+    // set event listeners on document
+    useEffect(() => {
+        const doMouseUp = (event: MouseEvent) => {
+            onMouseUp(event);
+        }
+        document.addEventListener('mouseup', doMouseUp);
+        return () => {
+            document.removeEventListener('mouseup', doMouseUp);
+        };
+    }, [onMouseUp]);
 
     return (
         <div style={{ ...size, display: 'flex', flexDirection: props.horizontal ? 'column' : 'row' }}>
@@ -72,7 +85,7 @@ export default function Resizable(props: PropsWithChildren<ResizableProps>) {
             </StyledContent>}
 
             {/* grab bar */}
-            <div onMouseDown={onMouseDown} onMouseUp={onMouseUp} style={props.horizontal ? {
+            <div onMouseDown={onMouseDown} style={props.horizontal ? {
                 top: 0,
                 left: 0,
                 height: '10px',
