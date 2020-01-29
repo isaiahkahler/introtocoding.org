@@ -8,7 +8,8 @@ interface ResizableProps {
     maxWidth?: string,
     closeWidth?: string,
     onClose?: () => void,
-    onResize?:() => void,
+    onResizeStart?: () => void,
+    onResize?: () => void,
     onResizeFinish?: () => void,
 }
 
@@ -41,6 +42,7 @@ export default function Resizable(props: PropsWithChildren<ResizableProps>) {
 
         event.currentTarget.parentElement && setInitialSize(props.horizontal ? event.currentTarget.parentElement.getBoundingClientRect().height : event.currentTarget.parentElement.getBoundingClientRect().width);
         setMoving(true);
+        props.onResizeStart && props.onResizeStart();
     }
 
     // these events are placed on the document, so they don't use React.MouseEvent
@@ -50,8 +52,8 @@ export default function Resizable(props: PropsWithChildren<ResizableProps>) {
     }, [_onResizeFinish]);
 
     const onMouseMove = useCallback((event: MouseEvent) => {
-        if(moving){
-            setSize(props.horizontal ? {height: `${initialSize - (event.pageY - initialPosition)}px`} : {width: `${initialSize + (event.pageX - initialPosition)}px`});
+        if (moving) {
+            setSize(props.horizontal ? { height: `${initialSize - (event.pageY - initialPosition)}px` } : { width: `${initialSize + (event.pageX - initialPosition)}px` });
             _onResize && _onResize();
         }
     }, [initialPosition, initialSize, moving, props.horizontal, _onResize])
