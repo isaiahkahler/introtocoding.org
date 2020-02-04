@@ -1,22 +1,32 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef, useImperativeHandle, forwardRef } from 'react';
 import Monaco from '@monaco-editor/react';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 interface EditorProps {
     theme: 'light' | 'dark',
-    onEditorReady: () => void,
-    valueGetter: React.MutableRefObject<(() => string) | undefined>,
-    
+    onEditorReady?: () => void,
 }
 
-export default function Editor(props: EditorProps) {
+const Editor = forwardRef((props: EditorProps, ref: any) => {
+    const valueGetterRef = useRef<any>();
+
+    useImperativeHandle(ref, () => ({
+        getContent: () => {
+            const valueGetter = valueGetterRef.current;
+            if (!valueGetter) return '';
+            return valueGetter();
+        }
+    }));
 
     return (
         //get language from course
         //get theme from settings or mui theme
 
-        <Monaco language='python' height='500px' theme={props.theme} editorDidMount={(_valueGetter) => {
-            props.onEditorReady();
-            props.valueGetter.current = _valueGetter;
+        <Monaco language='python' theme={props.theme} loading={() => <CircularProgress />} editorDidMount={(_valueGetter) => {
+            props.onEditorReady && props.onEditorReady();
+            valueGetterRef.current = _valueGetter;
         }} />
     );
-}
+})
+
+export default Editor;

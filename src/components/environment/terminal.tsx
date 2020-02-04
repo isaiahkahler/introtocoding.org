@@ -1,17 +1,13 @@
 import React, { useEffect, useState, useRef, useLayoutEffect, useMemo } from 'react';
-import {Terminal as XTerminal, ITheme} from 'xterm';
+import { Terminal as XTerminal, ITheme } from 'xterm';
+import { FitAddon } from 'xterm-addon-fit';
 import 'xterm/css/xterm.css';
-
-interface TerminalProps {
-    onInput: (input: string) => void,
-    theme: 'light' | 'dark',
-    username?: string,
-}
+import { useTheme } from '@material-ui/core/styles';
 
 /** Div ID of the XTermJS element */
 const xTermID = 'x-terminal';
 
-const xTermLight:ITheme = {
+const xTermLight: ITheme = {
     background: '#fff',
     foreground: '#000',
     // //@ts-ignore
@@ -30,11 +26,20 @@ const darkTheme = {
 };
 
 
+interface TerminalProps {
+    onInput: (input: string) => void,
+    theme: 'light' | 'dark',
+    username?: string,
+    resizing: boolean,
+}
+
 export default function Terminal(props: TerminalProps) {
 
     const xTermOptions = props.theme === 'light' ? lightTheme : darkTheme;
 
     const xTerm = useMemo(() => new XTerminal(xTermOptions), [xTermOptions]);
+
+    const fitAddon = useMemo(() => new FitAddon(), []);
 
     const [isStarted, setIsStarted] = useState(false);
 
@@ -44,6 +49,8 @@ export default function Terminal(props: TerminalProps) {
 
     const commandRef = useRef(command);
 
+    const [resizing, setResizing] = useState(props.resizing);
+
     useLayoutEffect(() => {
         commandRef.current = command;
     }, [command]);
@@ -51,9 +58,13 @@ export default function Terminal(props: TerminalProps) {
     //start xTerm object
     useEffect(() => {
 
-        if(xTerm && !isStarted){
+        if (xTerm && !isStarted) {
+
+            xTerm.loadAddon(fitAddon);
             const el = document.getElementById(xTermID);
             el && xTerm.open(el);
+            fitAddon.fit();
+
             setIsStarted(true);
             console.log('opened terminal')
 
@@ -65,32 +76,32 @@ export default function Terminal(props: TerminalProps) {
                 const ev = e.domEvent;
                 const printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
                 const _command = commandRef.current;
-            
+
                 // on 'enter'
                 if (ev.keyCode === 13) {
                     props.onInput(_command);
                     //on enter, clear the current command
                     setCommand('');
                     prompt();
-                // on 'backspace'
+                    // on 'backspace'
                 } else if (ev.keyCode === 8) {
-                 // Do not delete the prompt
-                  if (xTerm.buffer.cursorX > promptText.length) {
-                    xTerm.write('\b \b');
-                    setCommand(prev => prev.slice(0, prev.length - 1));
-                  }
-                // on printable character
+                    // Do not delete the prompt
+                    if (xTerm.buffer.cursorX > promptText.length) {
+                        xTerm.write('\b \b');
+                        setCommand(prev => prev.slice(0, prev.length - 1));
+                    }
+                    // on printable character
                 } else if (printable) {
-                  xTerm.write(e.key);
-                  setCommand(prev => prev + e.key);
+                    xTerm.write(e.key);
+                    setCommand(prev => prev + e.key);
                 }
-              });
+            });
 
-              prompt();
+            prompt();
 
         }
 
-        return(() => {
+        return (() => {
             xTerm && xTerm.dispose();
         });
     }, [xTerm]);
@@ -105,7 +116,7 @@ export default function Terminal(props: TerminalProps) {
     //         const ev = e.domEvent;
     //         const printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
     //         const _command = commandRef.current;
-        
+
     //         // on 'enter'
     //         if (ev.keyCode === 13) {
     //             props.onInput(_command);
@@ -125,7 +136,7 @@ export default function Terminal(props: TerminalProps) {
     //           setCommand(prev => prev + e.key);
     //         }
     //       });
-        
+
     //     return () => {
     //         unsubscribe.dispose();
     //     }
@@ -134,12 +145,12 @@ export default function Terminal(props: TerminalProps) {
 
     useEffect(() => {
 
-        xTerm && xTerm.setOption('theme', props.theme === 'light'? xTermLight : {});
+        xTerm && xTerm.setOption('theme', props.theme === 'light' ? xTermLight : {});
 
     }, [props.theme, xTerm]);
 
-    return(
-        <div id={xTermID}>
+    return (
+        <div id={xTermID} style={{position: false ? 'absolute' : 'relative'}}>
         </div>
     );
 }
