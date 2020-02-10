@@ -6,6 +6,7 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { Link } from 'react-router-dom';
 
 interface HomeProps {
     grade: number,
@@ -22,49 +23,23 @@ const StyledPaper = styled(Paper)((props: { theme: Theme }) => ({
 }));
 
 
-const StyledCircularProgress = styled(({ ...props }) => {
-    console.log({ ...props })
-    return (
-        <div style={{ position: 'relative' }}>
-            <CircularProgress {...{ ...props, value: 100 }} style={{ color: "#ccc" }} >
-            </CircularProgress>
-            <CircularProgress {...props}>
-
-            </CircularProgress>
-        </div>
-
-    )
-})((props: { theme: Theme }) => ({
-    position: "relative"
+const StyledCircularProgressContainer = styled('div')(({ theme }) => ({
+    height: '150px',
+    width: '150px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: theme.spacing(1),
 }));
 
-// const StyledCircularProgress = styled(({...other}) => {
-//     console.log(other, 'hi?'); return(
-// <CircularProgress size='50' variant='static' {...other}>
-
-// </CircularProgress>
-// )})((props: {theme: Theme}) => ({
-
-// }));
-
+const StyledLink = styled(Link)(({theme}) => ({
+    textDecoration: 'none',
+    color: theme.palette.getContrastText(theme.palette.background.default),
+}));
 
 function Home(props: HomeProps) {
 
     const theme = useTheme();
-
-    // const StyledCircularProgress = createStyledCircularProgress(theme);
-
-    const [gradeAnimation, setGradeAnimation] = useState(1);
-    const [progressAnimation, setProgressAnimation] = useState(1);
-
-    useEffect(() => {
-        setTimeout(() => {
-            setGradeAnimation(props.grade);
-            setProgressAnimation(props.progress);
-
-        }, 2000);
-    }, []);
-
 
     return (
         <Page title='Dashboard'>
@@ -73,21 +48,27 @@ function Home(props: HomeProps) {
                     <Grid item xs>
                         <StyledPaper>
                             <Typography variant='h6'>Current Grade</Typography>
-
+                            <StyledCircularProgressContainer>
+                                <Typography variant='h5' style={{ position: 'absolute' }}>{props.grade}%</Typography>
+                                <CircularProgress variant='static' value={props.grade} size='150px'></CircularProgress>
+                            </StyledCircularProgressContainer>
                         </StyledPaper>
                     </Grid>
                     <Grid item xs>
                         <StyledPaper>
                             <Typography variant='h6'>Progress</Typography>
-                            <StyledCircularProgress variant='static' value={props.progress} />
-
+                            <StyledCircularProgressContainer>
+                                <Typography variant='h5' style={{ position: 'absolute' }}>{props.progress}%</Typography>
+                                <CircularProgress variant='static' value={props.progress} size='150px'></CircularProgress>
+                            </StyledCircularProgressContainer>
                         </StyledPaper>
                     </Grid>
                     <Grid item xs>
                         <StyledPaper>
                             <Typography variant='h6'>Next Lesson</Typography>
-
-                            <Typography variant='h5'>Something Here</Typography>
+                            <StyledLink to='/learning'>
+                                <Typography variant='h5'>[Lesson Name]</Typography>
+                            </StyledLink>
 
                         </StyledPaper>
                     </Grid>

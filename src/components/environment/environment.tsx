@@ -25,12 +25,14 @@ const StyledColumnsContainer = styled('div')({
     display: 'flex',
     flexDirection: 'row',
     flexGrow: 1,
+    overflow: 'hidden',
 });
 
 const StyledRowsContainer = styled('div')({
     display: 'flex',
     flexDirection: 'column',
     flexGrow: 1,
+    overflow: 'hidden'
 });
 
 const StyledContentContainer = styled('div')({
@@ -39,18 +41,18 @@ const StyledContentContainer = styled('div')({
 });
 
 const StyledSidebar = styled('div')(({ theme }) => ({
-    // width: '250px',
-    // [theme.breakpoints.down('xs')]: {
-    //     width: '100vw',
-    // },
+    width: '250px',
+    [theme.breakpoints.down('xs')]: {
+        width: '100vw',
+    },
 }));
 
-const StyledColumn = (props: PropsWithChildren<{ vertical: boolean }>) => {
+const StyledColumn = (props: PropsWithChildren<{ vertical?: boolean }>) => {
     return (
         <div style={{
             display: 'flex',
             flexDirection: props.vertical ? 'column' : 'row',
-            // flexGrow: 1,
+            flexGrow: 1,
             // width: '100%',
         }}>
             {props.children}
@@ -80,36 +82,41 @@ export default function Environment(props: EnvironmentProps) {
 
             <ToolbarSpacer />
             <StyledColumnsContainer>
-                {/* sidebar */}
-                {showSidebar && <Resizable onResizeStart={() => setHoldTerminal(true)} onResizeFinish={() => {
 
-                    setHoldTerminal(false)
-                }}>
+                {/* sidebar */}
+                <StyledColumn>
                     <StyledSidebar>
                         Side Bar
                     </StyledSidebar>
-                </Resizable>}
-                <StyledRowsContainer>
-                    {/* editor */}
-                    <StyledContentContainer>
-                        <Editor ref={editorRef} theme={theme.palette.type} onEditorReady={() => { }} />
+                </StyledColumn>
+
+                <Resizable>
+                    <StyledRowsContainer>
                         {/* editor */}
-                    </StyledContentContainer>
-                    {/* terminal */}
-                    <Resizable horizontal>
+                        {/* <StyledContentContainer> */}
+                            <Resizable horizontal>
+                            <Editor ref={editorRef} theme={theme.palette.type} onEditorReady={() => { }} />
+                            {/* editor */}
+
+                            {/* <div style={{ width: '500px', height: '300px', backgroundColor: '#ff0000' }}> stuff </div> */}
+                            </Resizable>
+                        {/* </StyledContentContainer> */}
+                        {/* terminal */}
+                        {/* <div style={{ width: '500px', height: '300px', backgroundColor: '#00ff00' }}> stuff </div> */}
+
                         <Terminal onInput={(input) => {
-                            console.log(input)
+                                console.log(input)
 
-                            //todo:
-                            // -look for 'python'
-                            // -respond to unrecognized commands  
-                            // -switch to an 'input' mode when text input is required
-                            // 'python filename.py'
+                                //todo:
+                                // -look for 'python'
+                                // -respond to unrecognized commands  
+                                // -switch to an 'input' mode when text input is required
+                                // 'python filename.py'
 
-                        }} theme={theme.palette.type} username={'isaiahkahler'} resizing={holdTerminal} />
+                            }} theme={theme.palette.type} username={'isaiahkahler'} resizing={holdTerminal} />
                         {/* terminal! */}
-                    </Resizable>
-                </StyledRowsContainer>
+                    </StyledRowsContainer>
+                </Resizable>
 
             </StyledColumnsContainer>
         </StyledEnvironment>
