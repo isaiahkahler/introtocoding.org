@@ -1,4 +1,4 @@
-import React, { useState, useRef, DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from 'react';
+import React, { useState, useRef, DetailedHTMLProps, HTMLAttributes, PropsWithChildren, useLayoutEffect, createRef } from 'react';
 import Sidebar from './sidebar';
 import Terminal from './terminal';
 import Editor from './editor';
@@ -7,6 +7,7 @@ import { styled, useTheme } from '@material-ui/core/styles';
 import Resizable from '../resizable';
 import Button from '@material-ui/core/Button';
 import { ToolbarSpacer } from '../mixins';
+import { useXterm } from './xterm';
 
 
 
@@ -68,11 +69,28 @@ export default function Environment(props: EnvironmentProps) {
 
     const [showTerminal, setShowTerminal] = useState(true);
 
+    const terminalEl = document.createElement('div');
+
+    const terminalRef = createRef<HTMLDivElement>();
+
+    const terminal = useXterm(terminalRef, {}, onInput);
+
+    function onInput(data: string){
+        if(data === 'run'){
+            const code = editorRef.current.getContent()
+            runCode(code);
+            console.log(code)
+        }
+    }
+
     // const
 
     const editorRef = useRef<any>();
 
-    const runCode = useSkulpt((output) => { console.log(output, 'output') });
+    const runCode = useSkulpt((output) => {
+        terminal.write(output);
+        console.log(output)
+     });
 
     // sets the terminal position to absolute while resizing
     const [holdTerminal, setHoldTerminal] = useState(false);
@@ -100,11 +118,13 @@ export default function Environment(props: EnvironmentProps) {
 
                             {/* <div style={{ width: '500px', height: '300px', backgroundColor: '#ff0000' }}> stuff </div> */}
                             </Resizable>
+
+                            <div ref={terminalRef}></div>
                         {/* </StyledContentContainer> */}
                         {/* terminal */}
                         {/* <div style={{ width: '500px', height: '300px', backgroundColor: '#00ff00' }}> stuff </div> */}
 
-                        <Terminal onInput={(input) => {
+                        {/* <Terminal onInput={(input) => {
                                 console.log(input)
 
                                 //todo:
@@ -113,7 +133,7 @@ export default function Environment(props: EnvironmentProps) {
                                 // -switch to an 'input' mode when text input is required
                                 // 'python filename.py'
 
-                            }} theme={theme.palette.type} username={'isaiahkahler'} resizing={holdTerminal} />
+                            }} theme={theme.palette.type} username={'isaiahkahler'} resizing={holdTerminal} /> */}
                         {/* terminal! */}
                     </StyledRowsContainer>
                 </Resizable>
