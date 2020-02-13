@@ -53,7 +53,7 @@ export default function Resizable(props: PropsWithChildren<ResizableProps>) {
 
     const onMouseMove = useCallback((event: MouseEvent) => {
         if (moving) {
-            setSize(props.horizontal ? { height: `${initialSize - (event.pageY - initialPosition)}px` } : { width: `${initialSize + (event.pageX - initialPosition)}px` });
+            setSize(props.horizontal ? { height: `${initialSize + (event.pageY - initialPosition)}px` } : { width: `${initialSize - (event.pageX - initialPosition)}px` });
             _onResize && _onResize();
         }
     }, [initialPosition, initialSize, moving, props.horizontal, _onResize])
@@ -82,7 +82,8 @@ export default function Resizable(props: PropsWithChildren<ResizableProps>) {
 
     return (
         <div style={{ ...size, display: 'flex', flexDirection: props.horizontal ? 'column' : 'row' }}>
-            {!props.horizontal && <StyledContent>
+            
+            {props.horizontal && <StyledContent>
                 {props.children}
             </StyledContent>}
 
@@ -95,7 +96,8 @@ export default function Resizable(props: PropsWithChildren<ResizableProps>) {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                border: '1px solid #000',
+                borderTop: '1px solid #000',
+                borderBottom: '1px solid #000',
                 cursor: 'row-resize',
                 userSelect: 'none'
             } : {
@@ -106,24 +108,26 @@ export default function Resizable(props: PropsWithChildren<ResizableProps>) {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    border: '1px solid #000',
+                    borderLeft: '1px solid #000',
+                    borderRight: '1px solid #000',
                     cursor: 'col-resize',
                     userSelect: 'none'
                 }}>
                 {/* grab indicator */}
                 <div style={props.horizontal ? {
                     height: '5px',
-                    width: '25px',
+                    width: '50px',
                     backgroundColor: theme.palette.grey[500],
                     borderRadius: '5px',
                 } : {
-                        height: '25px',
+                        height: '50px',
                         width: '5px',
                         backgroundColor: theme.palette.grey[500],
                         borderRadius: '5px',
                     }} />
             </div>
-            {props.horizontal && <StyledContent>
+
+            {!props.horizontal && <StyledContent>
                 {props.children}
             </StyledContent>}
         </div>
