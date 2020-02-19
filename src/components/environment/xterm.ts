@@ -27,7 +27,9 @@ export function useXterm(element: RefObject<HTMLDivElement>, options: { username
 
     const xTermOptions = theme.palette.type === 'light' ? lightTheme : darkTheme;
 
-    const xTerm = useMemo(() => new XTerminal(xTermOptions), [xTermOptions]);
+    //code review: memoized value should not change if options change. 
+    //if options change, xterm is updated through 
+    const xTerm = useMemo(() => new XTerminal(xTermOptions), []);
 
     const fitAddon = useMemo(() => new FitAddon(), []);
 
@@ -65,6 +67,7 @@ export function useXterm(element: RefObject<HTMLDivElement>, options: { username
 
                 // on 'enter'
                 if (ev.keyCode === 13) {
+
                     onInput(_command);
                     //on enter, clear the current command
                     setCommand('');
@@ -86,6 +89,8 @@ export function useXterm(element: RefObject<HTMLDivElement>, options: { username
 
         }
 
+
+        //code review: terminal never disposes.
         // makes infinite loop because flips isStarted
 
         // return (() => {
@@ -98,6 +103,12 @@ export function useXterm(element: RefObject<HTMLDivElement>, options: { username
         // });
     }, [element, fitAddon, xTerm, isStarted, onInput, promptText]);
 
+    useEffect(() => {
+
+        xTerm && xTerm.setOption('theme', theme.palette.type === 'light' ? xTermLight : {});
+
+    }, [theme.palette.type, xTerm]);
+
 
     const terminal = {
         write: (data: string) => {
@@ -106,6 +117,11 @@ export function useXterm(element: RefObject<HTMLDivElement>, options: { username
         resize: () => {
             if (xTerm) {
                 fitAddon.fit();
+            }
+        },
+        clear: () => {
+            if(xTerm) {
+                xTerm.clear();
             }
         }
     };
