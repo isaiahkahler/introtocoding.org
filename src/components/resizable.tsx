@@ -4,9 +4,9 @@ import { styled, useTheme } from '@material-ui/core/styles';
 
 interface ResizableProps {
     horizontal?: boolean,
-    initialWidth?: string,
-    maxWidth?: string,
-    closeWidth?: string,
+    initialSize?: React.CSSProperties,
+    maxSize?: React.CSSProperties,
+    closeSize?: React.CSSProperties,
     onClose?: () => void,
     onResizeStart?: () => void,
     onResize?: () => void,
@@ -28,7 +28,7 @@ export default function Resizable(props: PropsWithChildren<ResizableProps>) {
 
     const [initialSize, setInitialSize] = useState(0);
 
-    const [size, setSize] = useState<React.CSSProperties>();
+    const [size, setSize] = useState<React.CSSProperties>(props.initialSize ? props.initialSize : {});
 
     const [moving, setMoving] = useState(false);
 

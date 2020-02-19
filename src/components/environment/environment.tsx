@@ -75,11 +75,10 @@ export default function Environment(props: EnvironmentProps) {
 
     const terminal = useXterm(terminalRef, {}, onInput);
 
-    function onInput(data: string){
-        if(data === 'run'){
+    function onInput(data: string) {
+        if (data === 'run') {
             const code = editorRef.current.getContent()
             runCode(code);
-            console.log(code)
         }
     }
 
@@ -89,8 +88,7 @@ export default function Environment(props: EnvironmentProps) {
 
     const runCode = useSkulpt((output) => {
         terminal.write(output);
-        console.log(output)
-     });
+    });
 
     // sets the terminal position to absolute while resizing
     const [holdTerminal, setHoldTerminal] = useState(false);
@@ -111,66 +109,15 @@ export default function Environment(props: EnvironmentProps) {
                 <Resizable>
                     <StyledRowsContainer>
                         {/* editor */}
-                        {/* <StyledContentContainer> */}
-                            <Resizable horizontal>
+                        <Resizable horizontal>
                             <Editor ref={editorRef} theme={theme.palette.type} onEditorReady={() => { }} />
-                            {/* editor */}
-
-                            {/* <div style={{ width: '500px', height: '300px', backgroundColor: '#ff0000' }}> stuff </div> */}
-                            </Resizable>
-
-                            <div ref={terminalRef}></div>
-                        {/* </StyledContentContainer> */}
+                        </Resizable>
                         {/* terminal */}
-                        {/* <div style={{ width: '500px', height: '300px', backgroundColor: '#00ff00' }}> stuff </div> */}
-
-                        {/* <Terminal onInput={(input) => {
-                                console.log(input)
-
-                                //todo:
-                                // -look for 'python'
-                                // -respond to unrecognized commands  
-                                // -switch to an 'input' mode when text input is required
-                                // 'python filename.py'
-
-                            }} theme={theme.palette.type} username={'isaiahkahler'} resizing={holdTerminal} /> */}
-                        {/* terminal! */}
+                        <div ref={terminalRef}></div>
                     </StyledRowsContainer>
                 </Resizable>
 
             </StyledColumnsContainer>
         </StyledEnvironment>
-        // <StyledEnvironment>
-        //     <Resizable>
-        //         content
-        //         <Button onClick={() => {
-        //             const editor = editorRef.current;
-        //             if (!editor) return;
-        //             const content = editor.getContent();
-        //             runCode(content);
-        //         }}>run</Button>
-        //     </Resizable>
-        // {/* {showSidebar && <StyledSidebar>
-        //     sidebar
-        //     <Button variant='contained' onClick={() => { setCount(count + 1) }}>
-        //         {count} clicks
-        //     </Button>
-        // </StyledSidebar>} */}
-        //     <StyledColumn vertical={terminalVertical}>
-        // <Editor ref={editorRef} theme={theme.palette.type} onEditorReady={() => { }} />
-        // {showTerminal && <div>
-        //     <Terminal onInput={(input) => {
-        //         console.log(input)
-
-        //         //todo:
-        //         // -look for 'python'
-        //         // -respond to unrecognized commands  
-        //         // -switch to an 'input' mode when text input is required
-        //         // 'python filename.py'
-
-        //         }} theme={theme.palette.type} username={'isaiahkahler'} />
-        // </div>}
-        //     </StyledColumn>
-        // </StyledEnvironment>
     );
 }
