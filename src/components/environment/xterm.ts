@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect, useLayoutEffect, useRef, Ref, MutableRefObject, RefObject } from 'react';
-import { Terminal as XTerminal, ITheme, IDisposable } from 'xterm';
+import { useState, useMemo, useEffect, useLayoutEffect, useRef, RefObject } from 'react';
+import { Terminal as XTerminal, ITheme } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import 'xterm/css/xterm.css';
 import { useTheme } from '@material-ui/core/styles';
@@ -15,10 +15,12 @@ const xTermLight: ITheme = {
 const lightTheme = {
     fontFamily: '"Roboto Mono", monospace',
     theme: xTermLight,
+    allowTransparency: true,
 };
 
 const darkTheme = {
-    fontFamily: '"Roboto Mono", monospace'
+    fontFamily: '"Roboto Mono", monospace',
+    allowTransparency: true,
 };
 
 export function useXterm(elementRef: RefObject<HTMLDivElement>, options: { username?: string }, onInput: (command: string) => void) {
@@ -28,8 +30,8 @@ export function useXterm(elementRef: RefObject<HTMLDivElement>, options: { usern
     const xTermOptions = theme.palette.type === 'light' ? lightTheme : darkTheme;
 
     //code review: memoized value should not change if options change. 
-    //if options change, xterm is updated through 
-    const xTerm = useMemo(() => new XTerminal(xTermOptions), []);
+    //if options change, xterm is updated through listening useEffect
+    const xTerm = useState(new XTerminal(xTermOptions))[0];
 
     const fitAddon = useMemo(() => new FitAddon(), []);
 
@@ -47,12 +49,12 @@ export function useXterm(elementRef: RefObject<HTMLDivElement>, options: { usern
 
     useEffect(() => {
 
-        let onKeySubscription: IDisposable;
 
         if (xTerm && !isStarted && elementRef.current) {
             setIsStarted(true);
             xTerm.open(elementRef.current);
             xTerm.loadAddon(fitAddon);
+            // fitAddon.activate(xTerm);
             fitAddon.fit();
             console.log('opened terminal!!');
 
@@ -60,7 +62,8 @@ export function useXterm(elementRef: RefObject<HTMLDivElement>, options: { usern
                 xTerm.write(`\r\n${promptText}`);
             };
 
-            onKeySubscription = xTerm.onKey((e: { key: string, domEvent: KeyboardEvent }) => {
+            //store what this line returns to dispose 
+            xTerm.onKey((e: { key: string, domEvent: KeyboardEvent }) => {
                 const ev = e.domEvent;
                 const printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
                 const _command = commandRef.current;
@@ -71,7 +74,6 @@ export function useXterm(elementRef: RefObject<HTMLDivElement>, options: { usern
                     onInput(_command);
                     //on enter, clear the current command
                     setCommand('');
-                    prompt();
                     // on 'backspace'
                 } else if (ev.keyCode === 8) {
                     // Do not delete the prompt
@@ -83,7 +85,7 @@ export function useXterm(elementRef: RefObject<HTMLDivElement>, options: { usern
                 } else if (printable) {
                     xTerm.write(e.key);
                     setCommand(prev => prev + e.key);
-                }
+                } 
             });
             prompt();
 
@@ -112,6 +114,9 @@ export function useXterm(elementRef: RefObject<HTMLDivElement>, options: { usern
 
     const terminal = {
         write: (data: string) => {
+            xTerm.write(`\r\n${data}`);
+        },
+        writePlain: (data: string) => {
             xTerm.write(`\r${data}`);
         },
         resize: () => {
@@ -122,8 +127,13 @@ export function useXterm(elementRef: RefObject<HTMLDivElement>, options: { usern
         clear: () => {
             if(xTerm) {
                 xTerm.clear();
+                xTerm.write('\b \b\b \b\b \b\b \b\b \b');
             }
-        }
+        },
+        prompt: () => {
+            xTerm && xTerm.write(`\r\n${promptText}`);  
+        },
+        isReady: isStarted,
     };
 
     return terminal;
