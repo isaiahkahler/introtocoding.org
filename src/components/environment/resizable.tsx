@@ -106,34 +106,41 @@ export function useResizable(props: UseResizableProps) {
             //mouse event handlers
 
             //when click down, record mouse position, size, and set moving
-            grabBar.addEventListener('mousedown', (event) => {
+            
+            const onMouseDown = (event: MouseEvent) => {
                 initialPosition = props.direction === 'vertical' ? event.pageX : event.pageY;
                 initialSize = props.direction === 'vertical' ? target.getBoundingClientRect().width : target.getBoundingClientRect().height;
                 initialSizeMirror = props.direction === 'vertical' ? mirror.getBoundingClientRect().width : mirror.getBoundingClientRect().height;
                 moving = true;
-            });
-            grabBar.addEventListener('touchstart', (event) => {
+            }
+            const onTouchStart = (event: TouchEvent) => {
                 event.preventDefault();
                 initialPosition = props.direction === 'vertical' ? event.changedTouches[0].pageX : event.changedTouches[0].pageY;
                 initialSize = props.direction === 'vertical' ? target.getBoundingClientRect().width : target.getBoundingClientRect().height;
                 initialSizeMirror = props.direction === 'vertical' ? mirror.getBoundingClientRect().width : mirror.getBoundingClientRect().height;
                 moving = true;
-            });
+            }
+            grabBar.addEventListener('mousedown', onMouseDown);
+            grabBar.addEventListener('touchstart', onTouchStart);
+
+
 
             //finish moving
-            document.addEventListener('mouseup', (event) => {
+            const onMouseUp = (event: MouseEvent) => {
                 moving = false;
                 props.onResize && props.onResize();
-            });
-            document.addEventListener('touchend', (event) => {
+            }
+            const onTouchEnd = (event: TouchEvent) => {
                 event.preventDefault();
                 moving = false;
                 props.onResize && props.onResize();
-            });
+            }
+            document.addEventListener('mouseup', onMouseUp);
+            document.addEventListener('touchend', onTouchEnd);
 
             //when moving, set the width / height of the element to the calculated difference 
             //also subtract the change in size to the mirror element, so the page remains the same size
-            document.addEventListener('mousemove', (event) => {
+            const onMouseMove = (event: MouseEvent) => {
                 if (moving) {
                     if(props.direction === 'vertical') {
                         const difference = event.pageX - initialPosition;
@@ -146,8 +153,8 @@ export function useResizable(props: UseResizableProps) {
 
                     }
                 }
-            });
-            document.addEventListener('touchmove', (event) => {
+            }
+            const onTouchMove = (event: TouchEvent) => {
                 event.preventDefault();
                 if (moving) {
                     if(props.direction === 'vertical') {
@@ -161,7 +168,9 @@ export function useResizable(props: UseResizableProps) {
 
                     }
                 }
-            });
+            }
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('touchmove', (event) => onTouchMove);
 
             //when the window resizes, fit the mirror element to what's left
             window.addEventListener('resize', () => {
@@ -170,6 +179,15 @@ export function useResizable(props: UseResizableProps) {
                 } else {
                     mirror.style.height = containerElement.getBoundingClientRect().height - target.getBoundingClientRect().height + 'px';
                 }
+            });
+
+            return(() => {
+                grabBar.removeEventListener('mousedown', onMouseDown);
+                grabBar.removeEventListener('touchstart', onTouchStart);
+                document.removeEventListener('mouseup', onMouseUp);
+                document.removeEventListener('touchend', onTouchEnd);
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('touchmove', onTouchMove);
             });
 
         }
