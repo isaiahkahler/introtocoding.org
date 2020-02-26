@@ -185,7 +185,7 @@ export default function Environment(props: EnvironmentProps) {
                                     name: 'mr berts nice worms',
                                     type: 'folder',
                                     content: [{
-                                        name: 'loneley.boy.py',
+                                        name: 'f.py',
                                         type: 'file',
                                         content: 'fds'
                                     }]
