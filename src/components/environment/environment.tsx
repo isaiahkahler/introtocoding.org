@@ -15,7 +15,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import NotesIcon from '@material-ui/icons/Notes';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import FileList from './sidebar/fileList';
-
+import useFileSystem from './fileSystem';
 
 
 
@@ -54,7 +54,9 @@ export default function Environment(props: EnvironmentProps) {
     const terminalContainerRef = createRef<HTMLDivElement>();
     const editorContainerRef = createRef<HTMLDivElement>();
 
-    useResizable({
+    const fileSystem = useFileSystem('Python Environment', 'index.py');
+
+    const sidebarResizable = useResizable({
         targetRef: sidebarRef,
         mirrorRef: rowContainerRef,
         containerRef: containerRef,
@@ -119,10 +121,12 @@ export default function Environment(props: EnvironmentProps) {
                     alignItems: 'center',
                     minWidth: '72px',
                     height: '100%',
+                    zIndex: 2,
                     backgroundColor: theme.palette.background.paper,
-                    color: theme.palette.action.active,
-                }}>
-                    <IconButton>
+                    color: theme.palette.primary.dark,
+                    boxShadow: theme.shadows[2],
+                }} >
+                    <IconButton onClick={() => { sidebarResizable.toggle() }}>
                         <FileCopyIcon fontSize='large' />
                     </IconButton>
                     <IconButton>
@@ -149,80 +153,42 @@ export default function Environment(props: EnvironmentProps) {
 
                 <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1 }} ref={containerRef}>
 
-                </div>
-
-                <div ref={sidebarRef} style={{ width: '250px' }}>
-                    <FileList files={{
-                        name: 'h', 
-                        type: 'folder', 
-                        content: [{
-                            name: 'something.py', 
-                            type: 'file', 
-                            content: 'fjdks'
-                            }, {
-                            name: 'unit whatever', 
-                            type: 'folder', 
-                            content: [{
-                                name: 'something2.py', 
-                                type: 'file', 
-                                content: 'fjdks'
-                            }, {
-                                name: 'something3.py', 
-                                type: 'file', 
-                                content: 'fjdks'
-                            }]},{
-                                name: "weebo",
-                                type: 'folder',
-                                content: [{
-                                    name: 'file.txt',
-                                    type: 'file',
-                                    content: 'fjkdl'
-                                },{
-                                    name: 'something.other',
-                                    type: 'file',
-                                    content: 'fj'
-                                }, {
-                                    name: 'mr berts nice worms',
-                                    type: 'folder',
-                                    content: [{
-                                        name: 'f.py',
-                                        type: 'file',
-                                        content: 'fds'
-                                    }]
-                                }]
-                            }]}} />
-                </div>
-
-                <div ref={rowContainerRef}>
-                    <div ref={editorContainerRef}>
-                        <Editor ref={editorRef} theme={theme.palette.type} onEditorReady={() => { }} />
-                        editor
+                    <div ref={sidebarRef} style={{ width: '250px' }}>
+                        <FileList files={fileSystem.files} />
                     </div>
-                    <div ref={terminalContainerRef} style={{ height: '250px', position: 'relative' }}>
-                        <div ref={terminalRef} style={terminal.isReady ? { width: '100%', height: '100%' } : { width: '200px', height: '100%' }}></div>
-                        <div style={{
-                            position: 'absolute',
-                            top: theme.spacing(2),
-                            right: theme.spacing(1),
-                            display: 'flex',
-                            flexDirection: 'row-reverse',
-                            color: theme.palette.action.active,
-                            zIndex: 10,
-                        }}>
-                            <IconButton onClick={() => {
-                                terminalResizable.close();
+
+                    <div ref={rowContainerRef}>
+                        <div ref={editorContainerRef}>
+                            <Editor ref={editorRef} theme={theme.palette.type} onEditorReady={() => { }} />
+                            editor
+                    </div>
+                        <div ref={terminalContainerRef} style={{ height: '250px', position: 'relative' }}>
+                            <div ref={terminalRef} style={terminal.isReady ? { width: '100%', height: '100%' } : { width: '200px', height: '100%' }}></div>
+                            <div style={{
+                                position: 'absolute',
+                                top: theme.spacing(2),
+                                right: theme.spacing(1),
+                                display: 'flex',
+                                flexDirection: 'row-reverse',
+                                color: theme.palette.action.active,
+                                zIndex: 10,
                             }}>
-                                <CloseIcon />
-                            </IconButton>
-                            <IconButton>
-                                <ExpandLessIcon />
-                            </IconButton>
-                            <IconButton>
-                                <DeleteIcon />
-                            </IconButton>
+                                <IconButton onClick={() => {
+                                    terminalResizable.close();
+                                }}>
+                                    <CloseIcon />
+                                </IconButton>
+                                <IconButton>
+                                    <ExpandLessIcon />
+                                </IconButton>
+                                <IconButton>
+                                    <DeleteIcon />
+                                </IconButton>
+                            </div>
                         </div>
                     </div>
                 </div>
+
 
             </div>
 
