@@ -181,14 +181,14 @@ export function useResizable(props: UseResizableProps) {
                 }
             });
 
-            return(() => {
-                grabBar.removeEventListener('mousedown', onMouseDown);
-                grabBar.removeEventListener('touchstart', onTouchStart);
-                document.removeEventListener('mouseup', onMouseUp);
-                document.removeEventListener('touchend', onTouchEnd);
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('touchmove', onTouchMove);
-            });
+            // return(() => {
+            //     grabBar.removeEventListener('mousedown', onMouseDown);
+            //     grabBar.removeEventListener('touchstart', onTouchStart);
+            //     document.removeEventListener('mouseup', onMouseUp);
+            //     document.removeEventListener('touchend', onTouchEnd);
+            //     document.removeEventListener('mousemove', onMouseMove);
+            //     document.removeEventListener('touchmove', onTouchMove);
+            // });
 
         }
 
