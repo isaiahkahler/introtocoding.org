@@ -53,7 +53,7 @@ export default function Resizable(props: PropsWithChildren<ResizableProps>) {
 
     const onMouseMove = useCallback((event: MouseEvent) => {
         if (moving) {
-            setSize(props.horizontal ? { height: `${initialSize + (event.pageY - initialPosition)}px` } : { width: `${initialSize - (event.pageX - initialPosition)}px` });
+            setSize(props.horizontal ? { height: `${initialSize - (event.pageY - initialPosition)}px` } : { width: `${initialSize + (event.pageX - initialPosition)}px` });
             _onResize && _onResize();
         }
     }, [initialPosition, initialSize, moving, props.horizontal, _onResize])
@@ -83,9 +83,11 @@ export default function Resizable(props: PropsWithChildren<ResizableProps>) {
     return (
         <div style={{ ...size, display: 'flex', flexDirection: props.horizontal ? 'column' : 'row' }}>
             
-            {props.horizontal && <StyledContent>
+            {!props.horizontal && <StyledContent>
                 {props.children}
             </StyledContent>}
+
+
 
             {/* grab bar */}
             <div onMouseDown={onMouseDown} style={props.horizontal ? {
@@ -127,9 +129,11 @@ export default function Resizable(props: PropsWithChildren<ResizableProps>) {
                     }} />
             </div>
 
-            {!props.horizontal && <StyledContent>
+
+            {props.horizontal && <StyledContent>
                 {props.children}
             </StyledContent>}
+
         </div>
     );
 }

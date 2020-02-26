@@ -21,7 +21,7 @@ const darkTheme = {
     fontFamily: '"Roboto Mono", monospace'
 };
 
-export function useXterm(element: RefObject<HTMLDivElement>, options: { username?: string }, onInput: (command: string) => void) {
+export function useXterm(elementRef: RefObject<HTMLDivElement>, options: { username?: string }, onInput: (command: string) => void) {
 
     const theme = useTheme();
 
@@ -49,9 +49,9 @@ export function useXterm(element: RefObject<HTMLDivElement>, options: { username
 
         let onKeySubscription: IDisposable;
 
-        if (xTerm && !isStarted && element.current) {
+        if (xTerm && !isStarted && elementRef.current) {
             setIsStarted(true);
-            xTerm.open(element.current);
+            xTerm.open(elementRef.current);
             xTerm.loadAddon(fitAddon);
             fitAddon.fit();
             console.log('opened terminal!!');
@@ -101,7 +101,7 @@ export function useXterm(element: RefObject<HTMLDivElement>, options: { username
         //     xTerm && xTerm.dispose();
         //     console.log('disposed terminal')
         // });
-    }, [element, fitAddon, xTerm, isStarted, onInput, promptText]);
+    }, [elementRef, fitAddon, xTerm, isStarted, onInput, promptText]);
 
     useEffect(() => {
 
