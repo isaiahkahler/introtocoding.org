@@ -15,7 +15,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import NotesIcon from '@material-ui/icons/Notes';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import FileList from './sidebar/fileList';
-import useFileSystem from './fileSystem';
+import useFileSystem, {FileManager} from './fileSystem';
 
 
 
@@ -54,19 +54,24 @@ export default function Environment(props: EnvironmentProps) {
     const terminalContainerRef = createRef<HTMLDivElement>();
     const editorContainerRef = createRef<HTMLDivElement>();
 
-    const fileSystem = useFileSystem('Python Environment', 'index.py');
+    const fileManager = useFileSystem('Python Environment');
 
     const sidebarResizable = useResizable({
         targetRef: sidebarRef,
         mirrorRef: rowContainerRef,
         containerRef: containerRef,
         direction: 'vertical',
+        options: {
+            minWidth: .2,
+            maxWidth: .5,
+        },
     });
     const terminalResizable = useResizable({
         targetRef: terminalContainerRef,
         mirrorRef: editorContainerRef,
         containerRef: containerRef,
         direction: 'horizontal',
+        options: {},
         onResize: () => {
             terminal.resize();
         }
@@ -120,7 +125,7 @@ export default function Environment(props: EnvironmentProps) {
                     flexDirection: 'column',
                     alignItems: 'center',
                     minWidth: '72px',
-                    height: '100%',
+                    alignSelf: 'stretch',
                     zIndex: 2,
                     backgroundColor: theme.palette.background.paper,
                     color: theme.palette.primary.dark,
@@ -129,7 +134,7 @@ export default function Environment(props: EnvironmentProps) {
                     <IconButton onClick={() => { sidebarResizable.toggle() }}>
                         <FileCopyIcon fontSize='large' />
                     </IconButton>
-                    <IconButton>
+                    <IconButton onClick={() => { sidebarResizable.expand() }}>
                         <SearchIcon fontSize='large' />
                     </IconButton>
                     <IconButton>
@@ -139,11 +144,7 @@ export default function Environment(props: EnvironmentProps) {
                         <CheckBoxIcon fontSize='large' />
                     </IconButton>
                     <IconButton onClick={() => {
-                        if (terminalResizable.visible) {
-                            terminalResizable.close();
-                        } else {
-                            terminalResizable.open();
-                        }
+                        terminalResizable.toggle();
                     }}>
                         <svg style={{ width: '1.5em', height: '1.5em' }} viewBox="0 0 24 24">
                             <path fill="currentColor" d="M20,19V7H4V19H20M20,3A2,2 0 0,1 22,5V19A2,2 0 0,1 20,21H4A2,2 0 0,1 2,19V5C2,3.89 2.9,3 4,3H20M13,17V15H18V17H13M9.58,13L5.57,9H8.4L11.7,12.3C12.09,12.69 12.09,13.33 11.7,13.72L8.42,17H5.59L9.58,13Z" />
@@ -154,7 +155,9 @@ export default function Environment(props: EnvironmentProps) {
                 <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1 }} ref={containerRef}>
 
                     <div ref={sidebarRef} style={{ width: '250px' }}>
-                        <FileList files={fileSystem.files} />
+                        <FileList fileManager={fileManager} fileActions={{onFileClick: (item) => {
+                            
+                        }}} />
                     </div>
 
                     <div ref={rowContainerRef}>
@@ -163,7 +166,7 @@ export default function Environment(props: EnvironmentProps) {
                             editor
                     </div>
                         <div ref={terminalContainerRef} style={{ height: '250px', position: 'relative' }}>
-                            <div ref={terminalRef} style={terminal.isReady ? { width: '100%', height: '100%' } : { width: '200px', height: '100%' }}></div>
+                            <div ref={terminalRef} style={terminal.isReady ? { width: '100%', height: '100%' } : { width: '50%', height: '100%' }}></div>
                             <div style={{
                                 position: 'absolute',
                                 top: theme.spacing(2),
