@@ -6,6 +6,10 @@ interface UseResizableProps {
     mirrorRef: RefObject<HTMLDivElement>,
     containerRef: RefObject<HTMLDivElement>,
     direction: 'horizontal' | 'vertical',
+    options: {
+        minWidth?: number,
+        maxWidth?: number,
+    },
     onResize?: () => void,
 }
 
@@ -17,13 +21,15 @@ export function useResizable(props: UseResizableProps) {
 
     const [grabBar, setGrabBar] = useState<HTMLDivElement>();
 
-    const [visible, setVisible] = useState(true);
+    const [visibility, setVisibility] = useState<'open' | 'hidden' | 'expanded'>('open');
 
     const [defaultSize, setDefaultSize] = useState(0);
     const [defaultDisplay, setDefaultDisplay] = useState('');
+    const [defaultMirrorDisplay, setDefaultMirrorDisplay] = useState('');
 
+    //if theme changes, change grab bar theme
     useEffect(() => {
-        if(grabBar){
+        if (grabBar) {
             grabBar.style.backgroundColor = theme.palette.background.paper;
         }
     }, [theme, grabBar]);
@@ -33,7 +39,7 @@ export function useResizable(props: UseResizableProps) {
         const target = props.targetRef.current;
         const mirror = props.mirrorRef.current;
         const containerElement = props.containerRef.current;
-        
+
         if (target && mirror && containerElement && !started) {
             console.log('start resizable')
             setStarted(true);
@@ -82,7 +88,8 @@ export function useResizable(props: UseResizableProps) {
             }
             //assemble grab bar
             grabBar.appendChild(grabIndicator);
-            
+
+            // arrange elements inside of the target
             if (props.direction === 'vertical') {
 
                 for (let i = 0; i < target.children.length; i++) {
@@ -90,7 +97,6 @@ export function useResizable(props: UseResizableProps) {
                 }
                 target.appendChild(container);
                 target.appendChild(grabBar);
-                
 
             } else {
                 target.insertBefore(grabBar, target.childNodes[0]);
@@ -100,10 +106,10 @@ export function useResizable(props: UseResizableProps) {
             let initialSize = 0;
             let moving = false;
             let initialSizeMirror = 0;
-            
+
 
             //calculate and set initial mirror element width / height AND set defaults for collapsing
-            if(props.direction === 'vertical'){
+            if (props.direction === 'vertical') {
                 target.style.width = target.getBoundingClientRect().width + 'px';
                 containerElement.style.width = containerElement.getBoundingClientRect().width + 'px';
                 mirror.style.width = containerElement.getBoundingClientRect().width - target.getBoundingClientRect().width + 'px';
@@ -115,11 +121,12 @@ export function useResizable(props: UseResizableProps) {
                 setDefaultSize(target.getBoundingClientRect().height);
             }
             setDefaultDisplay(target.style.display);
+            setDefaultMirrorDisplay(mirror.style.display);
 
             //mouse event handlers
 
             //when click down, record mouse position, size, and set moving
-            
+
             const onMouseDown = (event: MouseEvent) => {
                 initialPosition = props.direction === 'vertical' ? event.pageX : event.pageY;
                 initialSize = props.direction === 'vertical' ? target.getBoundingClientRect().width : target.getBoundingClientRect().height;
@@ -155,7 +162,7 @@ export function useResizable(props: UseResizableProps) {
             //also subtract the change in size to the mirror element, so the page remains the same size
             const onMouseMove = (event: MouseEvent) => {
                 if (moving) {
-                    if(props.direction === 'vertical') {
+                    if (props.direction === 'vertical') {
                         const difference = event.pageX - initialPosition;
                         target.style.width = initialSize + difference + 'px';
                         mirror.style.width = initialSizeMirror - difference + 'px';
@@ -170,7 +177,7 @@ export function useResizable(props: UseResizableProps) {
             const onTouchMove = (event: TouchEvent) => {
                 event.preventDefault();
                 if (moving) {
-                    if(props.direction === 'vertical') {
+                    if (props.direction === 'vertical') {
                         let difference = event.changedTouches[0].pageX - initialPosition;
                         target.style.width = initialSize + difference + 'px';
                         mirror.style.width = initialSizeMirror - difference + 'px';
@@ -187,7 +194,7 @@ export function useResizable(props: UseResizableProps) {
 
             //when the window resizes, fit the mirror element to what's left
             window.addEventListener('resize', () => {
-                if(props.direction === 'vertical'){
+                if (props.direction === 'vertical') {
                     mirror.style.width = containerElement.getBoundingClientRect().width - target.getBoundingClientRect().width + 'px';
                 } else {
                     mirror.style.height = containerElement.getBoundingClientRect().height - target.getBoundingClientRect().height + 'px';
@@ -209,19 +216,20 @@ export function useResizable(props: UseResizableProps) {
 
     const resizable = {
         close: () => {
-            setVisible(false);
+            setVisibility('hidden');
             const target = props.targetRef.current;
             const mirror = props.mirrorRef.current;
             const container = props.containerRef.current;
-            if(target && mirror && container) {
+            if (target && mirror && container) {
                 let newSize = 0;
-                if(props.direction === 'vertical'){
+                if (props.direction === 'vertical') {
                     newSize = container.getBoundingClientRect().width;
                 } else {
                     newSize = container.getBoundingClientRect().height;
                 }
                 target.style.display = 'none';
-                if(props.direction === 'vertical'){
+                mirror.style.display = defaultMirrorDisplay;
+                if (props.direction === 'vertical') {
                     mirror.style.width = newSize + 'px';
                 } else {
                     mirror.style.height = newSize + 'px';
@@ -229,12 +237,12 @@ export function useResizable(props: UseResizableProps) {
             }
         },
         open: () => {
-            setVisible(true);
+            setVisibility('open');
             const target = props.targetRef.current;
             const mirror = props.mirrorRef.current;
             const container = props.containerRef.current;
-            if(target && mirror && container) {
-                if(props.direction === 'vertical'){
+            if (target && mirror && container) {
+                if (props.direction === 'vertical') {
                     mirror.style.width = container.getBoundingClientRect().width - defaultSize + 'px';
                     target.style.width = defaultSize + 'px';
                 } else {
@@ -242,12 +250,33 @@ export function useResizable(props: UseResizableProps) {
                     target.style.height = defaultSize + 'px';
                 }
                 target.style.display = defaultDisplay;
+                mirror.style.display = defaultMirrorDisplay;
                 props.onResize && props.onResize();
             }
         },
-        visible: visible,
+        expand: () => {
+            setVisibility('expanded');
+            const target = props.targetRef.current;
+            const mirror = props.mirrorRef.current;
+            const container = props.containerRef.current;
+            if (target && mirror && container) {
+                let newSize = 0;
+                if (props.direction === 'vertical') {
+                    newSize = container.getBoundingClientRect().width;
+                } else {
+                    newSize = container.getBoundingClientRect().height;
+                }
+                target.style.display = defaultDisplay;
+                mirror.style.display = 'none';
+                if (props.direction === 'vertical') {
+                    target.style.width = newSize + 'px';
+                } else {
+                    target.style.height = newSize + 'px';
+                }
+            }
+        },
         toggle: () => {
-            if(visible) {
+            if (visibility === 'open' || visibility === 'expanded') {
                 resizable.close();
             } else {
                 resizable.open();
