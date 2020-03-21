@@ -22,7 +22,7 @@ const Editor = forwardRef((props: EditorProps, ref: any) => {
         //get language from course
         //get theme from settings or mui theme
 
-        <Monaco language='python' theme={props.theme} loading={() => <CircularProgress />} editorDidMount={(_valueGetter) => {
+        <Monaco language='python' theme={props.theme} loading={'loading...'} editorDidMount={(_valueGetter) => {
             props.onEditorReady && props.onEditorReady();
             valueGetterRef.current = _valueGetter;
         }} />
