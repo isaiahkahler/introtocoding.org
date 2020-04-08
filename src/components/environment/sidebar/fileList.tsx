@@ -34,21 +34,19 @@ export default function FileList(props: FileListProps) {
             backgroundColor: theme.palette.background.default,
             color: theme.palette.action.active
         }}>
-            <div style={{ width: '100%', padding: theme.spacing(1), backgroundColor: theme.palette.primary.dark }}>
+            <div style={{ width: '100%', padding: theme.spacing(1), backgroundColor: theme.palette.action.selected }}>
                 <Typography variant='body1' component='p' style={{ fontWeight: 'bold' }} >
                     {props.fileManager.files.name}
                 </Typography>
             </div>
             <div style={{ width: '100%' }}>
                 <IconButton size='small' onClick={() => {
-
-
                     // LIMIT TO ONE
                     const newFile = props.fileManager.createFile('holder.file', '');
                     props.fileManager.addItem(newFile, selectedFolder);
                 }}>
                     <svg style={{ width: '1.25rem', height: '1.25rem', padding: theme.spacing(1) }} viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M11,15V12H9V15H6V17H9V20H11V17H14V15H11Z" />
+                        <path fill="currentColor" d="M12,14V11H10V14H7V16H10V19H12V16H15V14M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18" />
                     </svg>
                 </IconButton>
                 <IconButton size='small' onClick={() => {
@@ -57,7 +55,7 @@ export default function FileList(props: FileListProps) {
                     props.fileManager.addItem(newFile, selectedFolder);
                 }}>
                     <svg style={{ width: '1.25rem', height: '1.25rem', padding: theme.spacing(1) }} viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M10,4L12,6H20A2,2 0 0,1 22,8V18A2,2 0 0,1 20,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10M15,9V12H12V14H15V17H17V14H20V12H17V9H15Z" />
+                        <path fill="currentColor" d="M12 12H14V10H16V12H18V14H16V16H14V14H12V12M22 8V18C22 19.11 21.11 20 20 20H4C2.89 20 2 19.11 2 18V6C2 4.89 2.89 4 4 4H10L12 6H20C21.11 6 22 6.89 22 8M20 8H4V18H20V8Z" />
                     </svg>
                 </IconButton>
             </div>
@@ -82,7 +80,7 @@ function ListItem(props: ListItemProps) {
     const handleSubmit = (name: string, oldID: string, type: string) => {
         let newItem;
 
-        if(type === 'file') {
+        if (type === 'file') {
             newItem = props.fileManager.createFile(name);
         } else {
             newItem = props.fileManager.createFolder(name);
