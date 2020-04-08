@@ -28,8 +28,8 @@ export interface FileManager {
     moveItem: (id: string, targetID: string) => void,
     updateItem: (item: File | Folder) => void,
     replaceItem: (item: File | Folder, targetID: string) => void,
-    printFileSystem: () => void,
-    print: (item: File | Folder, indent?: number) => void,
+    print: (item?: File | Folder) => void,
+    toString: (item?: File | Folder) => string,
     _forEachRecursive: (folder: Folder, action: (item: File | Folder, parentItem?: Folder) => void) => void,
 }
 
@@ -59,8 +59,8 @@ export default function useFileSystem(name: string, defaultFile?: File) {
         createFile: (name: string, content?: string): File => {
             return {
                 name: name,
-                baseName: name.substring(0, name.indexOf('.')),
-                extension: name.substring(name.indexOf('.') + 1),
+                baseName: name.includes('.') ? name.substring(0, name.indexOf('.')) : name,
+                extension: name.includes('.') ? name.substring(name.indexOf('.') + 1) : '',
                 type: 'file',
                 id: uid(),
                 content: content ? content : '',
@@ -153,17 +153,33 @@ export default function useFileSystem(name: string, defaultFile?: File) {
             };
             setFileSystem(prev => subItem(prev, item, targetID))
         },
-        printFileSystem: () => {
-            fileSystem.content.forEach(item => {
-
-            });
+        print: (item?: File | Folder) => {
+            console.log(files.toString(item));
         },
-        print: (item: File | Folder, indent?: number) => {
-            if (item.type === 'folder') {
-                console.log(indent ? `>${' '.repeat(indent)}${item.name}` : `>item.name`)
+        toString: (item?: File | Folder) => {
+
+            const newItem = item ? item : fileSystem;
+            let string = '';
+
+            const stringFolder = (folder: Folder, indent?: number) => {
+                //print the folder
+                string += (indent ? '\n' : '') + (indent ? `${'  '.repeat(indent)}> ${folder.name}` : `> ${folder.name}`);
+                //print the folder's contents
+                folder.content.forEach(_item => {
+                    if(_item.type === 'file') {
+                        string += '\n' + (indent ? `  ${'  '.repeat(indent)}${_item.name}` : '  ' + _item.name);
+                    } else {
+                        stringFolder(_item, indent ? indent + 1 : 1);
+                    }
+                });
+            };
+
+            if (newItem.type === 'folder') {
+                stringFolder(newItem);
             } else {
-                console.log(indent ? `${' '.repeat(indent)}${item.name}.${item.extension}` : `${item.name}.${item.extension}`);
+                string = newItem.name;
             }
+            return string;
         },
         _forEachRecursive: (folder: Folder, action: (item: File | Folder, parentItem?: Folder) => void) => {
             //logic looks funky but this will go through ALL items INCLUDING the base folder.
