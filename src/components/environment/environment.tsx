@@ -81,7 +81,9 @@ export default function Environment(props: EnvironmentProps) {
 
         const keywords = data.split(' ').map(word => word.trim());
 
-        if (keywords.indexOf('python') !== -1) {
+        if (data === '') {
+            terminal.prompt();
+        } else if (keywords.indexOf('python') !== -1) {
             if (keywords.length === 1) {
                 //start up the interpreter
                 terminal.write('hey wait i havent made that feature yet')
@@ -100,6 +102,9 @@ export default function Environment(props: EnvironmentProps) {
 
         } else if (data === 'clear') {
             terminal.clear();
+        } else if (data === 'ls') { 
+            terminal.writeConverted(fileManager.toString());
+            terminal.prompt();
         } else {
             terminal.write(`command not found: ${data}`);
             terminal.prompt();

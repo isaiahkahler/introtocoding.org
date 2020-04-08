@@ -39,7 +39,7 @@ export function useXterm(elementRef: RefObject<HTMLDivElement>, options: { usern
 
     const [command, setCommand] = useState('');
 
-    const promptText = options.username ? `${options.username}:~$ ` : 'guest user:~$ ';
+    const promptText = options.username ? `${options.username} $ ` : 'guest user $ ';
 
     const commandRef = useRef(command);
 
@@ -118,6 +118,10 @@ export function useXterm(elementRef: RefObject<HTMLDivElement>, options: { usern
         },
         writePlain: (data: string) => {
             xTerm.write(`\r${data}`);
+        },
+        writeConverted: (data: string) => {
+            const newData = '\r\n' + data.replace(/\n/g, '\r\n');
+            xTerm.write(newData);
         },
         resize: () => {
             if (xTerm) {
