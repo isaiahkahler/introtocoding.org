@@ -29,4 +29,4 @@ The file system is still in development.
 And so is everything else. 
 
 
-## View the [Demo!](https://introtocodingdemo.herokuapp.com/)
+## View the [Demo!](https://introtocoding.netlify.app/)
