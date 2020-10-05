@@ -1,44 +1,32 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## What is Intro to Coding? 
 
-## Available Scripts
+Intro to Coding is a project that I'm working on with the goal of making coding eduction easier, modern, free, and accessible to all students. Right now I'm working on creating a simple online coding environment, and in the future I hope to create interactive, hands-on lessons built on top of this framework. 
 
-In the project directory, you can run:
+This started when I helped the new technology teacher at my high school create a new coding curriculum based off of Python 3, and now I'm hoping to take that curriculum and make hands-on interactive lessons online. 
+<!-- 
+## Are you trying to make another Code.org / Codecademy? 
 
-### `npm start`
+Not exactly, but maybe one day. Into to Coding has the goal of integrating into classrooms as a free and open source coding curriculum, making it easier for teachers to teach and students to learn. With more resources, Intro to Coding could one day be available to students without a teacher, but for right now this is outside the scope of the project. I also don't plan on ever monitizing this resource for profit. 
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## What's the Problem with Coding Education?
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+Coding education currently sucks. The problem is that technology advances at incredible speeds and education can't keep up to teach it. As a result, the coding taught in classrooms covers the boring fundamentals, which really pushes kids away with a natural interest in computers. Intro to Coding tries to balance fun and applicable programming with basic concepts to help kids find their true passion for computer science. 
 
-### `npm test`
+## How is Intro to Coding Different?
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Intro to Coding wants to teach kids with hands-on learning and interactive lessons in a way that the computer science classes haven't seen before. The goal is to use modern technology to teach modern technology, so kids -->
 
-### `npm run build`
+## The Ingredients
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+This project was made with **React** and **TypeScript**. 
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+The editor is using **[Monaco](https://github.com/suren-atoyan/monaco-react/)** (React version), the same editor built in to your favorite code editor, VS Code. 
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+The terminal is made using **[Xterm.js](https://xtermjs.org/)**, also used by VS Code. 
 
-### `npm run eject`
+The file system is still in development. 
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+And so is everything else. 
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## View the [Demo!](https://introtocodingdemo.herokuapp.com/)

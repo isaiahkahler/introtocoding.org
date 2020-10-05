@@ -67,7 +67,7 @@ function Home(props: HomeProps) {
                         <StyledPaper>
                             <Typography variant='h6'>Next Lesson</Typography>
                             <StyledLink to='/learning'>
-                                <Typography variant='h5'>Click <strong>Here</strong> to Launch the Lesson Demo!</Typography>
+                                <Typography variant='h5'>Click <strong>Here</strong> to Launch the Environment Demo!</Typography>
                             </StyledLink>
 
                         </StyledPaper>
