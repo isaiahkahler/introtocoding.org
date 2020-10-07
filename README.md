@@ -24,6 +24,8 @@ The editor is using **[Monaco](https://github.com/suren-atoyan/monaco-react/)** 
 
 The terminal is made using **[Xterm.js](https://xtermjs.org/)**, also used by VS Code. 
 
+Python is compiled in the browser using **[Skuplt](https://skulpt.org/)**, which I made into a custom hook for easy access.
+
 The file system is still in development. 
 
 And so is everything else. 
