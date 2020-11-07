@@ -1,6 +1,6 @@
 ## What is Intro to Coding? 
 
-Intro to Coding is a project that I'm working on with the goal of making coding eduction easier, modern, free, and accessible to all students. Right now I'm working on creating a simple online coding environment, and in the future I hope to create interactive, hands-on lessons built on top of this framework. 
+Intro to Coding is a project that I'm working on with the goal of making coding education easier, modern, free, and accessible to all students. Right now I'm working on creating a simple online coding environment, and in the future I hope to create interactive, hands-on lessons built on top of this framework. 
 
 This started when I helped the new technology teacher at my high school create a new coding curriculum based off of Python 3, and now I'm hoping to take that curriculum and make hands-on interactive lessons online. 
 <!-- 
