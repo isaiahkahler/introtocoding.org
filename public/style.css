@@ -1,0 +1,72 @@
+body {
+  background-color: #fff;
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+p,
+li {
+  color: #111;
+  font-family: "Heebo", sans-serif;
+  margin: 0;
+}
+
+h1 {
+  font-size: 7vh;
+}
+
+h2 {
+  font-size: 4vh;
+}
+
+h3 {
+  font-size: 3vh;
+}
+
+ul li {
+  list-style-type: disc;
+}
+
+p, a, li {
+    font-weight: 500;
+    font-size: 3vh;
+}
+
+.accent {
+  background-color: #3CB3F6;
+  color: #fff;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-just-center {
+  justify-content: center;
+}
+
+.flex-items-center {
+  align-items: center;
+}
+
+.center-all {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+#landing {
+  background-image: url('../media/bg.jpg');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
